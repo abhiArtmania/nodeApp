@@ -2,6 +2,7 @@ const Product = require('../models/product.model');
 module.exports = {
   test : function(req,res){
     res.send('Im in Test controller')
+    //res.render('index', { title: 'Hey', message: 'Hello there!' })
   },
   product_create: function(req,res){
     let product = new Product({
