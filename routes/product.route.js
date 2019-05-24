@@ -7,4 +7,5 @@ router.get('/:id/product_details',product_controller.product_details);
 router.put('/:id/update',product_controller.product_update);
 router.delete('/:id/delete',product_controller.product_delete);
 router.get('/productList',product_controller.product_list);
+router.get('/productPagination',product_controller.product_pagination);
 module.exports = router;
