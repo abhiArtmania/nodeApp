@@ -76,32 +76,6 @@ module.exports = {
       }).catch((error)=>{
         throw error;
       })
-
-      // Product.count({},(err,totalCount)=>{
-      //   if(err){
-      //     return res.json({
-      //       error:true,
-      //       message:'Error fetching data'
-      //     })
-      //   } else {
-      //     let totalPage = Math.ceil(totalCount/size)
-      //     Product.find({},{},query,function(err,data){
-      //       if(err){
-      //         response = {
-      //           error: true,
-      //           message: 'Error fetching data'
-      //         }
-      //       } else {
-      //         response = {
-      //           error:  false,
-      //           message:  data,
-      //           totalPages: totalPage
-      //         }
-      //       }
-      //       res.json(response)
-      //     })
-      //   }
-      // })
     }
   }
 }
