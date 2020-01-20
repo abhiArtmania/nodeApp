@@ -6,7 +6,7 @@ const url = 'https://en.wikipedia.org/wiki/List_of_Presidents_of_the_United_Stat
 module.exports = {
   get_US_presedent_list: function(req,res){
     rp(url)
-      .then(function(html){
+      .then((html)=>{
         let wikiUrls = [];
         let data = $('big > a', html)
         for(let i = 0; i < data.length; i++){

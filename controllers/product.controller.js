@@ -9,10 +9,8 @@ module.exports = {
       name:req.body.name,
       price:req.body.price
     }).then(function(response){
-      console.log(response,"-----response");
       res.send({data: response, msg: "product saved"})
     }).catch(function(error){
-      console.log(error,"------error");
       throw error;
     })
   },
@@ -20,10 +18,8 @@ module.exports = {
     Product.findOne({
       _id:req.params.id
     }).then(function(response){
-      console.log(response,"---response");
       res.send({data:response,message:'Product found'})
     }).catch(function(error){
-      console.log(error,"------error");
       throw error;
     })
   },
@@ -68,10 +64,26 @@ module.exports = {
     } else {
       query.skip = size * ( pageNo - 1 )
       query.limit = size
-      Product.find({}).skip(query.skip).limit(query.limit).lean().then((response)=>{
+      Product.aggregate([{
+        $facet:{                   //$facet processes multiple aggregation pipelines within a single stage on the same set of input documents
+          totalData:[
+            {$match:{}},
+            {$skip:query.skip},
+            {$limit:query.limit}
+          ],
+          totalCount:[
+            {$count:'count'}
+            // {
+            //   $group:{
+            //     count:{$sum:1}
+            //   }
+            // }
+          ]
+        }
+      }]).then((response)=>{
         let final = {};
-        final['data'] = response;
-        final['count'] = response.length;
+        final['data'] = response[0]['totalData'];
+        final['count'] = response[0]['totalCount'][0]['count'];
         res.json(final)
       }).catch((error)=>{
         throw error;
