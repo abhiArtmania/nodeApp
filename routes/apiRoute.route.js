@@ -1,9 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const user_controller = require('../controllers/user.controller');
 const product_controller = require('../controllers/product.controller');
 const scraping_controller = require('../controllers/scraping.controller');
 
-router.get('/test',product_controller.test)
+// User route
+router.post('/register_user', user_controller.register_user);
+router.post('/login',user_controller.login)
+router.get('/test',product_controller.varifyToken,user_controller.test)
+
+// Product route
 router.post('/create', product_controller.product_create);
 router.get('/:id/product_details',product_controller.product_details);
 router.put('/:id/update',product_controller.product_update);

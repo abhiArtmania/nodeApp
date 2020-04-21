@@ -1,8 +1,18 @@
 const Product = require('../models/product.model');
+const jwt = require('jsonwebtoken');
+const jwt_secretKey = 'Password@123'
+
 module.exports = {
-  test : function(req,res){
-    res.send('Im in Test controller')
-    //res.render('index', { title: 'Hey', message: 'Hello there!' })
+  varifyToken: function(req,res,next){
+    const bearerHeader = req.headers['authorization'];
+    if(typeof bearerHeader !== 'undefined'){
+      const bearer = bearerHeader.split(' ');
+      const bearerToken = bearer[1];
+      req.token = bearerToken;
+      next();
+    } else {
+      res.sendStatus(403)
+    }
   },
   product_create: function(req,res){
     Product.create({
