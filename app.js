@@ -24,7 +24,7 @@ app.set('view engine', 'jade');
 //   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 // });
 
-let port = 3014;
+let port = 3001;
 app.listen(port,()=>{
   console.log('Server is up and running on port number '+port);
 })

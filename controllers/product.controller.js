@@ -1,6 +1,7 @@
 const Product = require('../models/product.model');
 const jwt = require('jsonwebtoken');
 const jwt_secretKey = 'Password@123'
+const constants = require('../constants');
 
 module.exports = {
   varifyToken: function(req,res,next){
@@ -15,22 +16,37 @@ module.exports = {
     }
   },
   product_create: function(req,res){
-    Product.create({
-      name:req.body.name,
-      price:req.body.price
-    }).then(function(response){
-      res.send({data: response, msg: "product saved"})
-    }).catch(function(error){
-      throw error;
+    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
+      if(err){
+        res.sendStatus(403);
+      } else {
+        Product.create({
+          name:req.body.name,
+          price:req.body.price
+        }).then(function(response){
+          res.send({data: response, msg: "product saved"})
+        }).catch(function(error){
+          throw error;
+        })
+      }
     })
   },
   product_details: function(req,res){
-    Product.findOne({
-      _id:req.params.id
-    }).then(function(response){
-      res.send({data:response,message:'Product found'})
-    }).catch(function(error){
-      throw error;
+    console.log("111111");
+    jwt.verify(req.token, constants.jwt_secretKey, (err, authData)=>{
+      console.log(err,'-----------');
+      if(err){
+        res.sendStatus(403);
+      } else {
+        console.log("22222222222222");
+        Product.findOne({
+          _id:req.params.id
+        }).then(function(response){
+          res.send({data:response,message:'Product found'})
+        }).catch(function(error){
+          throw error;
+        })
+      }
     })
   },
   product_update: function(req,res){
