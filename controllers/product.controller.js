@@ -32,13 +32,10 @@ module.exports = {
     })
   },
   product_details: function(req,res){
-    console.log("111111");
     jwt.verify(req.token, constants.jwt_secretKey, (err, authData)=>{
-      console.log(err,'-----------');
       if(err){
         res.sendStatus(403);
       } else {
-        console.log("22222222222222");
         Product.findOne({
           _id:req.params.id
         }).then(function(response){
@@ -50,10 +47,20 @@ module.exports = {
     })
   },
   product_update: function(req,res){
-    Product.update({_id:req.params.id},{$set:req.body}).then((response)=>{
-      res.send('Product updated successfully')
-    }).catch((error)=>{
-      throw error;
+    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
+      if(err){
+        res.sendStatus(403)
+      } else {
+        Product.update({_id:req.params.id},{$set:req.body}).then((response)=>{
+          res.send({
+            data:response,
+            message:'Product updated successfully',
+            status:200
+          })
+        }).catch((error)=>{
+          throw error;
+        })
+      }
     })
   },
   product_delete: function(req,res){

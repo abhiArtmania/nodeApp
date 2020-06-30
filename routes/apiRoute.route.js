@@ -11,8 +11,8 @@ router.get('/test',product_controller.varifyToken,user_controller.test)
 
 // Product route
 router.post('/create', product_controller.varifyToken, product_controller.product_create);
-router.get('/:id/product_details',product_controller.product_details);
-router.put('/:id/update',product_controller.product_update);
+router.get('/:id/product_details',product_controller.varifyToken,product_controller.product_details);
+router.put('/:id/update',product_controller.varifyToken, product_controller.product_update);
 router.delete('/:id/delete',product_controller.product_delete);
 router.get('/productList',product_controller.product_list);
 router.get('/productPagination',product_controller.product_pagination);
