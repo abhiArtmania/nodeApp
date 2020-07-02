@@ -64,17 +64,35 @@ module.exports = {
     })
   },
   product_delete: function(req,res){
-    Product.remove({_id:req.params.id}).then((response)=>{
-      res.send('Product deleted successfully')
-    }).catch((error)=>{
-      throw error;
+    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
+      if(err){
+        res.sendStatus(403)
+      } else {
+        Product.remove({_id:req.params.id}).then((response)=>{
+          res.json({
+            status:200,
+            message:'Product deleted successfully'
+          })
+        }).catch((error)=>{
+          throw error;
+        })
+      }
     })
   },
   product_list: function(req,res){
-    Product.find().then((response)=>{
-      res.send({data:response,message:'Success'})
-    }).catch((error)=>{
-      throw error;
+    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
+      if(err){
+        res.sendStatus(403)
+      } else {
+        Product.find().then((response)=>{
+          res.send({
+            data:response,
+            message:'Success'
+          })
+        }).catch((error)=>{
+          throw error;
+        })
+      }
     })
   },
   product_pagination: function(req,res){
