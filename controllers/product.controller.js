@@ -96,49 +96,56 @@ module.exports = {
     })
   },
   product_pagination: function(req,res){
-    let pageNo = parseInt(req.query.pageNo)
-    let size = parseInt(req.query.size)
-    let response = {}
-    let query = {}
-    if( !(pageNo*1) || pageNo*1 < 1 ){
-      response = {
-        error: true,
-        message: 'Invalide page number, should start with 1'
-      }
-      return res.json(response)
-    } else if ( !size*1 ){
-      response = {
-        error: true,
-        message: 'Invalide size'
-      }
-      return res.json(response)
-    } else {
-      query.skip = size * ( pageNo - 1 )
-      query.limit = size
-      Product.aggregate([{
-        $facet:{                   //$facet processes multiple aggregation pipelines within a single stage on the same set of input documents
-          totalData:[
-            {$match:{}},
-            {$skip:query.skip},
-            {$limit:query.limit}
-          ],
-          totalCount:[
-            {$count:'count'}
-            // {
-            //   $group:{
-            //     count:{$sum:1}
-            //   }
-            // }
-          ]
+    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
+      if(err){
+        res.sendStatus(403)
+      } else {
+        let searchValue = req.query.search
+        let pageNo = parseInt(req.query.pageNo)
+        let size = parseInt(req.query.size)
+        let response = {}
+        let query = {}
+        if( !(pageNo*1) || pageNo*1 < 1 ){
+          response = {
+            error: true,
+            message: 'Invalide page number, should start with 1'
+          }
+          return res.json(response)
+        } else if ( !size*1 ){
+          response = {
+            error: true,
+            message: 'Invalide size'
+          }
+          return res.json(response)
+        } else {
+          query.skip = size * ( pageNo - 1 )
+          query.limit = size
+          Product.aggregate([{
+            $facet:{                   //$facet processes multiple aggregation pipelines within a single stage on the same set of input documents
+              totalData:[
+                {$match:{ name: new RegExp(searchValue, "gi") }},
+                {$skip:query.skip},
+                {$limit:query.limit}
+              ],
+              totalCount:[
+                {$count:'count'}
+                // {
+                //   $group:{
+                //     count:{$sum:1}
+                //   }
+                // }
+              ]
+            }
+          }]).then((response)=>{
+            let final = {};
+            final['data'] = response[0]['totalData'];
+            final['count'] = response[0]['totalCount'][0]['count'];
+            res.json(final)
+          }).catch((error)=>{
+            throw error;
+          })
         }
-      }]).then((response)=>{
-        let final = {};
-        final['data'] = response[0]['totalData'];
-        final['count'] = response[0]['totalCount'][0]['count'];
-        res.json(final)
-      }).catch((error)=>{
-        throw error;
-      })
-    }
+      }
+    })
   }
 }

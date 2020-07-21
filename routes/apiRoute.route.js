@@ -15,6 +15,6 @@ router.get('/:id/product_details',product_controller.varifyToken,product_control
 router.put('/:id/update',product_controller.varifyToken, product_controller.product_update);
 router.delete('/:id/delete', product_controller.varifyToken, product_controller.product_delete);
 router.get('/productList', product_controller.varifyToken, product_controller.product_list);
-router.get('/productPagination',product_controller.product_pagination);
+router.get('/productPagination', product_controller.varifyToken, product_controller.product_pagination);
 router.get('/scrap_US_presedents',scraping_controller.get_US_presedent_list);
 module.exports = router;
