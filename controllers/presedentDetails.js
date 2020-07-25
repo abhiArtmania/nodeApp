@@ -1,7 +1,7 @@
 const rp = require('request-promise');
 const $ = require('cheerio');
 
-const presedentDetails = function(url) {
+const presedent_details = function(url) {
   return rp(url)
     .then(function(html) {
       let a = {
@@ -15,4 +15,6 @@ const presedentDetails = function(url) {
     });
 }
 
-module.exports = presedentDetails;
+module.exports = {
+  presedent_details
+}

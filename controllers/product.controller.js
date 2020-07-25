@@ -1,151 +1,125 @@
 const Product = require('../models/product.model');
 const jwt = require('jsonwebtoken');
-const jwt_secretKey = 'Password@123'
-const constants = require('../constants');
+const CONFIG = require('../common/CONFIG');
+const helper = require('../common/helper');
+
+const product_create = async function(req,res){
+  let name = req.body.name,
+      price = req.body.price;
+    if(!name || !price){
+      return helper.success_response(res,null,'Fields Missing!',false)
+    }  else {
+      let newProduct = await Product.create({
+        name:req.body.name,
+        price:req.body.price
+      })
+      if(newProduct && newProduct._id){
+        return helper.success_response(res,newProduct,'Product saved!',true)
+      } else {
+        return helper.success_response(res,null,'Failed!',false)
+      }
+    }
+}
+
+const product_details = async function(req,res){
+  let productId = req.params.id
+  if(productId){
+    let data = await Product.findOne({
+      _id:productId
+    })
+    if(data && data._id){
+      return helper.success_response(res,data,'Product found!',true)
+    } else {
+      return helper.success_response(res,null,'Failed!',false)
+    }
+  } else {
+    return helper.success_response(res,null,'Product id missing!',false)
+  }
+}
+
+const product_update = async function(req,res){
+  let productId = req.params.id
+  if(productId){
+    let data = await Product.update({_id:productId},{$set:req.body})
+    if(data && data._id){
+      return helper.success_response(res,data,'Product updated!',true)
+    } else {
+      return helper.success_response(res,null,'Failed!',false)
+    }
+  } else {
+    return helper.success_response(res,null,'Product id missing!',false)
+  }
+}
+
+const product_delete = async function(req,res){
+  let productId = req.params.id
+  if(productId){
+    let data = await Product.remove({_id:req.params.id})
+    if(data){
+      return helper.success_response(res,null,'Product deleted successfully',true)
+    } else {
+      return helper.success_response(res,null,'Failed!',false)
+    }
+  } else {
+    return helper.success_response(res,null,'Product id missing!',false)
+  }
+}
+
+const product_list = async function(req,res){
+  let data = await Product.find()
+  if(data){
+    return helper.success_response(res,data,'Product List!',true)
+  } else {
+    return helper.success_response(res,null,'Failed!',false)
+  }
+}
+
+const product_pagination = async function(req,res){
+  let searchValue = req.query.search
+  let pageNo = parseInt(req.query.pageNo)
+  let size = parseInt(req.query.size)
+  let query = {}
+  if( !(pageNo*1) || pageNo*1 < 1 ){
+    return helper.success_response(res,null,'Invalide page number, should start with 1',false)
+  } else if ( !size*1 ){
+    return helper.success_response(res,null,'Invalide size',false)
+  } else {
+    query.skip = size * ( pageNo - 1 )
+    query.limit = size
+    let productList = await Product.aggregate([{
+      $facet:{                   //$facet processes multiple aggregation pipelines within a single stage on the same set of input documents
+        totalData:[
+          {$match:{ name: new RegExp(searchValue, "gi") }},
+          {$skip:query.skip},
+          {$limit:query.limit}
+        ],
+        totalCount:[
+          {$count:'count'}
+          // {
+          //   $group:{
+          //     count:{$sum:1}
+          //   }
+          // }
+        ]
+      }
+    }])
+
+    if(productList){
+      let finalList = {};
+      finalList['data'] = productList[0]['totalData'];
+      finalList['count'] = productList[0]['totalCount'][0]['count'];
+      return helper.success_response(res,finalList,'Product List',true)
+    } else {
+      return helper.success_response(res,null,'Failed',false)
+    }
+  }
+}
 
 module.exports = {
-  varifyToken: function(req,res,next){
-    const bearerHeader = req.headers['authorization'];
-    if(typeof bearerHeader !== 'undefined'){
-      const bearer = bearerHeader.split(' ');
-      const bearerToken = bearer[1];
-      req.token = bearerToken;
-      next();
-    } else {
-      res.sendStatus(403)
-    }
-  },
-  product_create: function(req,res){
-    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
-      if(err){
-        res.sendStatus(403);
-      } else {
-        Product.create({
-          name:req.body.name,
-          price:req.body.price
-        }).then(function(response){
-          res.send({data: response, msg: "product saved"})
-        }).catch(function(error){
-          throw error;
-        })
-      }
-    })
-  },
-  product_details: function(req,res){
-    jwt.verify(req.token, constants.jwt_secretKey, (err, authData)=>{
-      if(err){
-        res.sendStatus(403);
-      } else {
-        Product.findOne({
-          _id:req.params.id
-        }).then(function(response){
-          res.send({data:response,message:'Product found'})
-        }).catch(function(error){
-          throw error;
-        })
-      }
-    })
-  },
-  product_update: function(req,res){
-    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
-      if(err){
-        res.sendStatus(403)
-      } else {
-        Product.update({_id:req.params.id},{$set:req.body}).then((response)=>{
-          res.send({
-            data:response,
-            message:'Product updated successfully',
-            status:200
-          })
-        }).catch((error)=>{
-          throw error;
-        })
-      }
-    })
-  },
-  product_delete: function(req,res){
-    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
-      if(err){
-        res.sendStatus(403)
-      } else {
-        Product.remove({_id:req.params.id}).then((response)=>{
-          res.json({
-            status:200,
-            message:'Product deleted successfully'
-          })
-        }).catch((error)=>{
-          throw error;
-        })
-      }
-    })
-  },
-  product_list: function(req,res){
-    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
-      if(err){
-        res.sendStatus(403)
-      } else {
-        Product.find().then((response)=>{
-          res.send({
-            data:response,
-            message:'Success'
-          })
-        }).catch((error)=>{
-          throw error;
-        })
-      }
-    })
-  },
-  product_pagination: function(req,res){
-    jwt.verify(req.token, constants.jwt_secretKey, (err,authData)=>{
-      if(err){
-        res.sendStatus(403)
-      } else {
-        let searchValue = req.query.search
-        let pageNo = parseInt(req.query.pageNo)
-        let size = parseInt(req.query.size)
-        let response = {}
-        let query = {}
-        if( !(pageNo*1) || pageNo*1 < 1 ){
-          response = {
-            error: true,
-            message: 'Invalide page number, should start with 1'
-          }
-          return res.json(response)
-        } else if ( !size*1 ){
-          response = {
-            error: true,
-            message: 'Invalide size'
-          }
-          return res.json(response)
-        } else {
-          query.skip = size * ( pageNo - 1 )
-          query.limit = size
-          Product.aggregate([{
-            $facet:{                   //$facet processes multiple aggregation pipelines within a single stage on the same set of input documents
-              totalData:[
-                {$match:{ name: new RegExp(searchValue, "gi") }},
-                {$skip:query.skip},
-                {$limit:query.limit}
-              ],
-              totalCount:[
-                {$count:'count'}
-                // {
-                //   $group:{
-                //     count:{$sum:1}
-                //   }
-                // }
-              ]
-            }
-          }]).then((response)=>{
-            let final = {};
-            final['data'] = response[0]['totalData'];
-            final['count'] = response[0]['totalCount'][0]['count'];
-            res.json(final)
-          }).catch((error)=>{
-            throw error;
-          })
-        }
-      }
-    })
-  }
+  product_create,
+  product_details,
+  product_update,
+  product_delete,
+  product_list,
+  product_pagination
 }
