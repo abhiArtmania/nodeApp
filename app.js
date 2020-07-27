@@ -6,6 +6,7 @@ const app = express();
 // Set up mongoose connection
 const mongoose = require('mongoose');
 const path = require('path');
+const CONFIG = require('./common/CONFIG');
 // let dev_db_url = 'mongodb://abhishek.singh@affle.com:Affle@123.mlab.com:23619/productstutorial';
 // let dev_db_url = 'mongodb+srv://abhishek:affle@123@cluster0-iv0sv.mongodb.net/test?retryWrites=true';
 let dev_db_url = 'mongodb://localhost:27017/abhiTestDB';
@@ -24,7 +25,7 @@ app.set('view engine', 'jade');
 //   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 // });
 
-let port = 3001;
+let port = CONFIG.port;
 app.listen(port,()=>{
   console.log('Server is up and running on port number '+port);
 })

@@ -18,6 +18,8 @@
     "nodemon": "^1.19.0",
     "puppeteer": "^1.17.0",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4"
+    "request-promise": "^4.2.4",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-ui-express": "^4.1.4"
   }
 }
