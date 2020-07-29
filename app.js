@@ -3,6 +3,7 @@ const bodyParser = require('express');
 
 const apiRoute = require('./routes/apiRoute.route');
 const app = express();
+const http = require('http')
 // Set up mongoose connection
 const mongoose = require('mongoose');
 const path = require('path');
@@ -21,11 +22,36 @@ app.use(bodyParser.urlencoded({extended: false})); //bodyParser.urlencoded extra
 app.use('/api',apiRoute);
 app.set('view engine', 'jade');
 // app.use(express.static(path.join(__dirname, 'dist')))
-// app.get('/', function (req, res) {
-//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-// });
+app.get('/', function (req, res) {
+  // res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  // res.send('<h1>Hello world</h1>');
+  res.sendFile(path.join(__dirname, 'chatbot', 'index.html'))
+});
 
+let server = http.createServer(app)
+let io = require('socket.io')(server);
 let port = CONFIG.port;
-app.listen(port,()=>{
+
+io.on('connection', (socket)=>{
+  console.log('New user connected');
+  // If you want to send a message to everyone except for a certain emitting socket, we have the broadcast flag for emitting from that socket:
+  // socket.broadcast.emit('Hi--');
+
+   //emit message from server to user
+   socket.emit('uniqueKey', "Hi, I'm the Support Assistant");
+   socket.emit('uniqueKey', "How can I help your?");
+
+  // listen for message from user
+  socket.on('uniqueKey', (newMessage)=>{
+    console.log('newMessage---------', newMessage);
+    io.emit('uniqueKey',newMessage);
+  });
+
+  // when server disconnects from user
+  socket.on('disconnect', ()=>{
+    console.log('disconnected from user-----------');
+  });
+});
+server.listen(port,()=>{
   console.log('Server is up and running on port number '+port);
 })

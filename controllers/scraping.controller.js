@@ -9,7 +9,7 @@ const url = 'https://en.wikipedia.org/wiki/List_of_Presidents_of_the_United_Stat
      * /api/scrap_US_presedents:
      *   post:
      *     tags:
-     *       - Scraping API
+     *       - Web scraping API
      *     description: Scraping of US president list from wikipedia
      *     produces:
      *       - application/json
