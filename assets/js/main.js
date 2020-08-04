@@ -29,7 +29,6 @@ const addToUsersBox = (userName) => {
   if (document.querySelector(`.${userName.userName}-userlist`)) {
     return;
   }
-  let localStore = JSON.parse(localStorage.getItem("authData"))
   const userBox = `
     <div class="chat_ib ${userName.userName}-userlist ${userName._id === authData._id ? 'its-me' : ''}">
       <h5>${userName.userName}</h5>
@@ -62,8 +61,6 @@ inputField.addEventListener('keyup',(e)=>{
     if(previousValue !== inputField.value){
       val = inputField.value
       previousValue = inputField.value
-    } else {
-
     }
     socket.emit('typing',{
       isTyping: val.length > 0,
