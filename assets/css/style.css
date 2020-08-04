@@ -1,0 +1,177 @@
+body {
+  font: 13px Helvetica, Arial;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.inbox{
+  display: flex;
+  height: 95vh;
+}
+.inbox__people{
+  background: #60BCB3;
+  width: 30%;
+  font-family: auto;
+  font-style: italic;
+  text-align: center;
+}
+.heading{
+  border-bottom: 2px solid #F8C432;
+  color: #F8C432;
+  font-size: 22px;
+  margin: 20px;
+}
+.inbox__messages{
+  width: -webkit-fill-available;
+  background: gainsboro;
+  background-image: url(https://wallpapercave.com/wp/wp4410716.jpg);
+}
+
+.chat_ib{
+  border: 1px solid #429a90;
+  padding: 0px 20px;
+  background: #8aeadf;
+}
+
+form {
+   background: #55A9A0;
+   padding: 5px;
+   position: fixed;
+   bottom: 0;
+   width: 100%;
+ }
+form input {
+  border: 0;
+  padding: 10px;
+  width: 87%;
+  margin-right: 0.5%;
+}
+form button {
+  border-radius: 5px;
+  width: 9%;
+  background: #F8C432;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+}
+.messages__history{
+  flex-direction: column;
+  position: absolute;
+  display: flex;
+  flex: auto;
+  overflow: auto;
+  bottom: 8%;
+  width: 77%;
+  max-height: calc(100% - 75px);
+}
+.outgoing__message{
+  margin-top: 20px;
+  flex-direction: row;
+  align-self: flex-end;
+  position: relative;
+  flex: none;
+  display: flex;
+  margin: 4px 17px;
+  max-width: 80%;
+  /* background: #60BCB3;
+  border-radius: 6px;
+  padding: 12px;
+  color: #ffffff;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75); */
+}
+.outgoing__message p{
+  font-size: 16px;
+  background: #60BCB3;
+  border-radius: 6px;
+  padding: 12px;
+  color: #ffffff;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  margin-bottom: 5px;
+  word-break: break-all;
+}
+.outgoing__message .message__info{
+  text-align: right;
+  font-weight: bold;
+}
+.incoming__message{
+  margin-top: 20px;
+  flex-direction: row-reverse;
+  align-self: flex-start;
+  position: relative;
+  flex: none;
+  display: flex;
+  margin: 4px 17px;
+  /* background: #ffffff;
+  border-radius: 6px;
+  padding: 12px;
+  color: #000000;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75); */
+}
+.incoming__message p{
+  font-size: 16px;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 12px;
+  color: #000000;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  margin-bottom: 5px;
+  word-break: break-all;
+}
+.incoming__message .message__info{
+  width: 100%;
+  font-weight: bold;
+}.message__info .message__author{
+  margin-right: 13px;
+}
+.message__info .time_date{
+  float: right;
+  color: #267a75;
+}
+.inbox__messages .fallback{
+  position: absolute;
+  bottom: 4%;
+  margin-left: 10px;
+}
+.outgoing__message p:after {
+  content: "";
+  position: absolute;
+  margin-top: -5px;
+  margin-left: -5px;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid #60BCB3;
+  transform: rotate(-64deg);
+  right: -12px;
+  top: 18px;
+}
+.incoming__message p:before {
+  margin-top: -8px;
+  margin-left: -27px;
+  transform: rotate(32deg);
+  content: "";
+  position: absolute;
+  /* right: 97%; */
+  top: 15px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-right: 28px solid white;
+  border-bottom: 13px solid transparent;
+}
+
+.logout-button{
+  border-radius: 5px;
+  background: #F8C432;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  margin-top: 15px;
+}
+
+.chat_ib.its-me{
+  text-decoration: underline;
+  font-weight: bold;
+  font-size: 13px;
+}

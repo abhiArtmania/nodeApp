@@ -20,6 +20,7 @@ db.on('error',console.error.bind(console,'MongoDB connection error:'));
 app.use(bodyParser.json()); //body-parser extract the entire body portion of an incoming request stream and exposes it on req.body.
 app.use(bodyParser.urlencoded({extended: false})); //bodyParser.urlencoded extract the entire url and queries with url.
 app.use('/api',apiRoute);
+app.use(express.static(path.join(__dirname, '/assets')));
 app.set('view engine', 'jade');
 // app.use(express.static(path.join(__dirname, 'dist')))
 app.get('/', function (req, res) {
@@ -27,30 +28,36 @@ app.get('/', function (req, res) {
   // res.send('<h1>Hello world</h1>');
   res.sendFile(path.join(__dirname, 'chatbot', 'index.html'))
 });
+app.get('/connect', function (req, res) {
+  res.sendFile(path.join(__dirname, 'chatbot', 'chatbot.html'))
+});
 
 let server = http.createServer(app)
 let io = require('socket.io')(server);
 let port = CONFIG.port;
 
+const activeUsers = new Set()
 io.on('connection', (socket)=>{
-  console.log('New user connected');
-  // If you want to send a message to everyone except for a certain emitting socket, we have the broadcast flag for emitting from that socket:
-  // socket.broadcast.emit('Hi--');
-
-   //emit message from server to user
-   socket.emit('uniqueKey', "Hi, I'm the Support Assistant");
-   socket.emit('uniqueKey', "How can I help your?");
-
-  // listen for message from user
-  socket.on('uniqueKey', (newMessage)=>{
-    console.log('newMessage---------', newMessage);
-    io.emit('uniqueKey',newMessage);
+  console.log('Socket connection established...');
+  socket.on('new user', (data)=>{
+    console.log(`${data.userName} is now online`);
+    socket.userId = data;
+    activeUsers.add(data);
+    io.emit("new user", [...activeUsers]); // io.emit sends for all users including me 
   });
 
   // when server disconnects from user
   socket.on('disconnect', ()=>{
-    console.log('disconnected from user-----------');
+    console.log(`${socket.userId} is now offline`);
+    activeUsers.delete(socket.userId);
+    io.emit("user disconnected", socket.userId);
   });
+  socket.on('chat message',(data)=>{
+    io.emit('chat message',data)
+  })
+  socket.on('typing',(data)=>{
+    socket.broadcast.emit('typing',data)  // socket.brodcast sends for all users except me
+  })
 });
 server.listen(port,()=>{
   console.log('Server is up and running on port number '+port);

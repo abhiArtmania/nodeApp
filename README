@@ -5,3 +5,7 @@ https://cloud.mongodb.com/
 
  // Web scraping
  https://medium.freecodecamp.org/the-ultimate-guide-to-web-scraping-with-node-js-daa2027dcd3
+
+
+// Reference for chat application (using web socket)
+https://tsh.io/blog/socket-io-tutorial-real-time-communication/
