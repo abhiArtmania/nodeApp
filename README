@@ -9,3 +9,11 @@ https://cloud.mongodb.com/
 
 // Reference for chat application (using web socket)
 https://tsh.io/blog/socket-io-tutorial-real-time-communication/
+
+
+// Steps to run this project
+cmd - "nodemon app.js"
+
+Use Robo3t for mongodb GUI:-
+1. Install Robo3t
+2. create mongodb connection
